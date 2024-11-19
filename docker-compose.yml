@@ -1,0 +1,26 @@
+﻿services:
+  messy:
+    image: messy
+    build:
+      context: .
+      dockerfile: Messy/Dockerfile
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+    networks:
+      - aspnet-postgres
+      
+  postgres:
+    container_name: "postgresql"
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: 12345678
+      POSTGRES_USER: postgres
+    networks:
+      - aspnet-postgres 
+networks:
+  aspnet-postgres:
+      driver: bridge
