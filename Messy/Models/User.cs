@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Messy.Contexts.Configurations;
 using Messy.Helpers.Interfaces;
 using Microsoft.AspNetCore.Identity;
@@ -19,6 +20,10 @@ public class User : ITimeStampable, ISoftDeletable
     [Required]
     [MaxLength(255)]
     public string UserName { get; set; }
+
+    [Required] 
+    [NotMapped]
+    public string Password { get; set; }
     
     [Required]
     public long UserProfileId { get; set; }

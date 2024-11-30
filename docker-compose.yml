@@ -1,15 +1,15 @@
 ﻿services:
   messy:
-    image: messy
+    container_name: messy
     build:
       context: .
-      dockerfile: Messy/Dockerfile
-    ports:
-      - "5000:5000"
+      dockerfile: .docker/aspnet/Dockerfile
+    environment:
+      - ASPNETCORE_URLS=http://+:5000
     depends_on:
       - postgres
     networks:
-      - aspnet-postgres
+      - backend
       
   postgres:
     container_name: "postgresql"
@@ -20,7 +20,26 @@
       POSTGRES_PASSWORD: 12345678
       POSTGRES_USER: postgres
     networks:
-      - aspnet-postgres 
+      - backend 
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./initscripts:/docker-entrypoint-initdb.d
+          
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    volumes:
+      - .docker/nginx:/etc/nginx/conf.d
+    depends_on:
+      - messy
+    ports:
+      - "8000:80"
+    networks:
+      - backend
+        
 networks:
-  aspnet-postgres:
+  backend:
       driver: bridge
+      
+volumes:
+  postgres_data:
