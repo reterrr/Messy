@@ -1,6 +1,7 @@
 using System.Net.WebSockets;
 using System.Text;
 using Messy.Actions.User;
+using Messy.Helpers;
 using Messy.Requests;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -32,6 +33,16 @@ public class UserController : ControllerBase
         }
     }
 
+    [HttpGet("{id:long}")]
+    public IActionResult GetUser([FromRoute] long id)
+    {
+        return ExcludeDeletedUsers
+            .exclude(
+                ActionResolver<GetUserAction, GetUserRequest>
+                    .Resolve(new GetUserRequest { UserId = id })
+            );
+    }
+
     private async Task HandleWebSocketSearch(WebSocket webSocket)
     {
         var buffer = new byte[1024 * 4];
@@ -42,13 +53,14 @@ public class UserController : ControllerBase
             var requestJson = Encoding.UTF8.GetString(buffer, 0, result.Count);
             var request = JsonConvert.DeserializeObject<SearchUserRequest>(requestJson);
 
-            var response = ActionResolver<SearchUserAction, SearchUserRequest>
-                .Resolve(request);
+            var response = ExcludeDeletedUsers.exclude(ActionResolver<SearchUserAction, SearchUserRequest>
+                .Resolve(request));
 
             var responseJson = JsonConvert.SerializeObject(response);
             var responseBuffer = Encoding.UTF8.GetBytes(responseJson);
 
-            await webSocket.SendAsync(new ArraySegment<byte>(responseBuffer), WebSocketMessageType.Text, true, CancellationToken.None);
+            await webSocket.SendAsync(new ArraySegment<byte>(responseBuffer), WebSocketMessageType.Text, true,
+                CancellationToken.None);
 
             result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
         }

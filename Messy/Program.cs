@@ -1,3 +1,5 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Text;
 using Messy.Helpers;
 using Messy.Requests;
@@ -12,10 +14,7 @@ builder.Services.AddControllers(options =>
 {
     options.Conventions.Add(new RoutePrefixConvention("api"));
     options.ReturnHttpNotAcceptable = true;
-}).AddJsonOptions(option =>
-{
-    option.JsonSerializerOptions.PropertyNamingPolicy = null;
-});
+}).AddJsonOptions(option => { option.JsonSerializerOptions.PropertyNamingPolicy = null; });
 
 builder.Services.AddHttpContextAccessor();
 
@@ -41,6 +40,21 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey =
                 new SymmetricSecurityKey(
                     Encoding.UTF8.GetBytes(ConfigAccesser.Configuration.GetValue<string>("JwtSettings:SecretKey"))),
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnTokenValidated = context =>
+            {
+                var userId = context.Principal?.FindFirst(ClaimTypes.NameIdentifier).Value;
+
+                long.TryParse(userId, out var user);
+    
+                if (!AuthValidator.UserExists(user))
+                    context.Fail("Unauthorized");
+
+                return Task.CompletedTask;
+            }
         };
     });
 

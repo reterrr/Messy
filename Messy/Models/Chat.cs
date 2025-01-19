@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using Messy.Helpers.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace Messy.Models;
 public class Chat : ITimeStampable, ISoftDeletable

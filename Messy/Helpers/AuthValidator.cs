@@ -56,6 +56,19 @@ public class AuthValidator
         return result;
     }
 
+    public static bool UserExists(long userId)
+    {
+        using var connection = NpgslqConnector.CreateConnection();
+
+        connection.Open();
+
+        var userExistsCommand = new NpgsqlCommand("select exists(select 1 from users where id = @userId) ", connection);
+        userExistsCommand.Parameters.AddWithValue("userId", userId);
+        
+        
+        return (bool)userExistsCommand.ExecuteScalar();
+    }
+
     public static AuthValidator Make()
     {
         return new AuthValidator();
