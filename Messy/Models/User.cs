@@ -1,18 +1,15 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Messy.Contexts.Configurations;
 using Messy.Helpers.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 
 namespace Messy.Models;
-[EntityTypeConfiguration(typeof(UserConfiguration))]
+[Keyless]
 public class User : ITimeStampable, ISoftDeletable
 {
-    [Key]
     public long Id { get; set; }
-    
     [Required]
     [MaxLength(255)]
     public string Name { get; set; }

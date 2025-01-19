@@ -1,9 +1,7 @@
 using System.ComponentModel.DataAnnotations;
-using Messy.Contexts.Configurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Messy.Models;
-[EntityTypeConfiguration(typeof(PermissionConfiguration))]
 public class Permission
 {
     [Key]

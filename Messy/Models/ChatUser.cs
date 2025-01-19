@@ -1,9 +1,7 @@
-using Messy.Contexts.Configurations;
 using Messy.Helpers.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Messy.Models;
-[EntityTypeConfiguration(typeof(ChatUserConfguration))]
 public class ChatUser : ITimeStampable, ISoftDeletable
 {
     public long UserId { get; set; }

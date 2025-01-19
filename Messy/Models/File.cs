@@ -1,10 +1,8 @@
 using System.ComponentModel.DataAnnotations;
-using Messy.Contexts.Configurations;
 using Messy.Helpers.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Messy.Models;
-[EntityTypeConfiguration(typeof(FileConfiguration))]
 public class File : ITimeStampable, ISoftDeletable
 {
     [Key]

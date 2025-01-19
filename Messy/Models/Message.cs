@@ -1,11 +1,9 @@
 using System.ComponentModel.DataAnnotations;
-using Messy.Contexts.Configurations;
 using Messy.Helpers;
 using Messy.Helpers.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Messy.Models;
-[EntityTypeConfiguration(typeof(MessageConfiguration))]
 public class Message : ITimeStampable, ISoftDeletable
 {
     [Key]

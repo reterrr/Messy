@@ -1,24 +1,23 @@
 using System.Text;
-using System.Text.Json.Serialization;
-using Messy.Actions;
-using Messy.Actions.Auth;
-using Messy.Contexts;
 using Messy.Helpers;
-using Messy.Helpers.Interceptors;
-using Messy.Models;
+using Messy.Requests;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using DbContext = Messy.Actions.DbContext;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Register services
-builder.Services.AddControllers();
-builder.Services.AddSingleton<UpdateInterceptor>();
-builder.Services.AddSingleton<SoftDeleteInterceptor>();
+builder.Services.AddControllers(options =>
+{
+    options.Conventions.Add(new RoutePrefixConvention("api"));
+    options.ReturnHttpNotAcceptable = true;
+}).AddJsonOptions(option =>
+{
+    option.JsonSerializerOptions.PropertyNamingPolicy = null;
+});
+
+builder.Services.AddHttpContextAccessor();
 
 FileSettings.initialize(builder.Configuration);
 ConfigAccesser.Init(builder.Configuration);
@@ -26,18 +25,10 @@ ConfigAccesser.Init(builder.Configuration);
 var connectionString = builder.Configuration.GetConnectionString("DockerCommandsConnectionString") ??
                        throw new InvalidOperationException("Missing Docker connection string");
 
-MessyDbContextFactory.SetConnectionString(connectionString);
-builder.Services.AddDbContext<MessyDbContext>(
-    options =>
-        options
-            .UseNpgsql(connectionString)
-);
-
-// Add Swagger
+NpgslqConnector.setConnectionString(connectionString);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Add authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -53,10 +44,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-// Add authorization
+Request.Init(builder.Services.BuildServiceProvider().GetRequiredService<IHttpContextAccessor>());
+
 builder.Services.AddAuthorization(options =>
 {
-    // Set a default policy requiring authentication
     options.FallbackPolicy = new AuthorizationPolicyBuilder()
         .RequireAuthenticatedUser()
         .Build();
@@ -68,7 +59,6 @@ builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -76,15 +66,15 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseRouting();
+app.UseWebSockets();
+
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
 });
 
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 
 app.MapControllers();
 app.Run();

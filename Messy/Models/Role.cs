@@ -1,10 +1,8 @@
 using System.ComponentModel.DataAnnotations;
-using Messy.Contexts.Configurations;
 
 using Microsoft.EntityFrameworkCore;
 
 namespace Messy.Models;
-[EntityTypeConfiguration(typeof(RoleConfiguration))]
 public class Role
 {
     [Key]

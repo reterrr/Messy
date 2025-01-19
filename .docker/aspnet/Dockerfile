@@ -15,13 +15,11 @@ RUN wget https://dotnet.microsoft.com/download/dotnet/scripts/v1/dotnet-install.
 USER $APP_UID
 WORKDIR /app
 EXPOSE 5000
-
-
+    
 RUN dotnet tool install --global dotnet-ef
 
 # Make the global tools available in PATH
 ENV PATH="$PATH:/home/app/.dotnet/tools"
-
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release

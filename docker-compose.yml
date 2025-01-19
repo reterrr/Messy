@@ -10,6 +10,8 @@
       - postgres
     networks:
       - backend
+    volumes:
+      - ./Messy:/src/Messy
       
   postgres:
     container_name: "postgresql"

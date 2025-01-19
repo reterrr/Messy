@@ -1,5 +1,6 @@
-using Messy.Contexts;
 using Messy.Models;
+using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace Messy.Helpers;
 
@@ -7,8 +8,28 @@ public class AuthValidator
 {
     public User? ExtractValidUser(string username, string password)
     {
-        // Find user by username        
-        var user = MessyDbContext.Set<User>().FirstOrDefault(u => u.UserName == username);
+        User? user = null;
+
+        using (var connection = NpgslqConnector.CreateConnection())
+        {
+            connection.Open();
+            var getUserCommand = new NpgsqlCommand("SELECT * FROM users WHERE username = @username", connection);
+            getUserCommand.Parameters.AddWithValue("@username", username);
+
+            using (var reader = getUserCommand.ExecuteReader())
+            {
+                if (reader.Read())
+                {
+                    user = new User
+                    {
+                        Id = reader.GetInt32(reader.GetOrdinal("id")),
+                        UserName = reader.GetString(reader.GetOrdinal("username")),
+                        Password = reader.GetString(reader.GetOrdinal("password"))
+                    };
+                }
+            }
+        }
+
         if (user != null &&
             PasswordHasher.Verify(password, user.Password)) return user;
 
@@ -19,7 +40,20 @@ public class AuthValidator
 
     public bool UserExists(string matching)
     {
-        return MessyDbContext.Set<User>().Any(u => u.UserName == matching);
+        var result = false;
+        using var connection = NpgslqConnector.CreateConnection();
+        connection.Open();
+        var userExistsCommand =
+            new NpgsqlCommand("SELECT EXISTS (SELECT 1 FROM users WHERE username = @matching)", connection);
+        userExistsCommand.Parameters.AddWithValue("@matching", matching);
+
+        using var reader = userExistsCommand.ExecuteReader();
+        if (reader.Read())
+        {
+            result = reader.GetBoolean(0);
+        }
+
+        return result;
     }
 
     public static AuthValidator Make()
@@ -27,7 +61,5 @@ public class AuthValidator
         return new AuthValidator();
     }
 
-    private readonly MessyDbContext MessyDbContext = MessyDbContextFactory.CreateDbContext();
-    
     public static string? Message;
 }
