@@ -20,7 +20,7 @@ CREATE TABLE UserProfiles
 );
 
 ALTER TABLE UserProfiles
-    ADD CONSTRAINT FK_UserProfile_User FOREIGN KEY (UserId) REFERENCES Users (Id) on delete cascade ;
+    ADD CONSTRAINT FK_UserProfile_User FOREIGN KEY (UserId) REFERENCES Users (Id) ON DELETE CASCADE;
 
 CREATE TABLE Chats
 (
@@ -43,10 +43,10 @@ CREATE TABLE ChatUsers
 );
 
 ALTER TABLE ChatUsers
-    ADD CONSTRAINT FK_ChatUser_User FOREIGN KEY (UserId) REFERENCES Users (Id);
+    ADD CONSTRAINT FK_ChatUser_User FOREIGN KEY (UserId) REFERENCES Users (Id) ON DELETE CASCADE;
 
 ALTER TABLE ChatUsers
-    ADD CONSTRAINT FK_ChatUser_Chat FOREIGN KEY (ChatId) REFERENCES Chats (Id);
+    ADD CONSTRAINT FK_ChatUser_Chat FOREIGN KEY (ChatId) REFERENCES Chats (Id) ON DELETE CASCADE;
 
 CREATE TABLE Messages
 (
@@ -60,27 +60,23 @@ CREATE TABLE Messages
 );
 
 ALTER TABLE Messages
-    ADD CONSTRAINT FK_Message_Parent FOREIGN KEY (ParentId) REFERENCES Messages (Id);
+    ADD CONSTRAINT FK_Message_Parent FOREIGN KEY (ParentId) REFERENCES Messages (Id) ON DELETE CASCADE;
 
 ALTER TABLE Messages
-    ADD CONSTRAINT FK_Message_ChatUser FOREIGN KEY (ChatUserId) REFERENCES ChatUsers (Id);
+    ADD CONSTRAINT FK_Message_ChatUser FOREIGN KEY (ChatUserId) REFERENCES ChatUsers (Id) ON DELETE CASCADE;
 
 CREATE TABLE Roles
 (
     Id       BIGSERIAL PRIMARY KEY,
-    Priority SMALLINT    NOT NULL,
-    Name     VARCHAR(70) NOT NULL,
-    Slug     VARCHAR(50) NOT NULL
+    Type SMALLINT    NOT NULL,
+    Name     VARCHAR(70) NOT NULL
 );
 
 CREATE TABLE Permissions
 (
     Id        BIGSERIAL PRIMARY KEY,
     Name      VARCHAR(50) NOT NULL,
-    Slug      VARCHAR(50),
-    CreatedAt TIMESTAMP   NOT NULL,
-    UpdatedAt TIMESTAMP,
-    DeletedAt TIMESTAMP
+    Type      SMALLINT    NOT NULL
 );
 
 CREATE TABLE RolePermissions
@@ -91,10 +87,10 @@ CREATE TABLE RolePermissions
 );
 
 ALTER TABLE RolePermissions
-    ADD CONSTRAINT FK_RolePermission_Role FOREIGN KEY (RoleId) REFERENCES Roles (Id);
+    ADD CONSTRAINT FK_RolePermission_Role FOREIGN KEY (RoleId) REFERENCES Roles (Id) ON DELETE CASCADE;
 
 ALTER TABLE RolePermissions
-    ADD CONSTRAINT FK_RolePermission_Permission FOREIGN KEY (PermissionId) REFERENCES Permissions (Id);
+    ADD CONSTRAINT FK_RolePermission_Permission FOREIGN KEY (PermissionId) REFERENCES Permissions (Id) ON DELETE CASCADE;
 
 CREATE TABLE ChatUserPermissions
 (
@@ -104,10 +100,10 @@ CREATE TABLE ChatUserPermissions
 );
 
 ALTER TABLE ChatUserPermissions
-    ADD CONSTRAINT FK_ChatUserPermission_ChatUser FOREIGN KEY (ChatUserId) REFERENCES ChatUsers (Id);
+    ADD CONSTRAINT FK_ChatUserPermission_ChatUser FOREIGN KEY (ChatUserId) REFERENCES ChatUsers (Id) ON DELETE CASCADE;
 
 ALTER TABLE ChatUserPermissions
-    ADD CONSTRAINT FK_ChatUserPermission_Permission FOREIGN KEY (PermissionId) REFERENCES Permissions (Id);
+    ADD CONSTRAINT FK_ChatUserPermission_Permission FOREIGN KEY (PermissionId) REFERENCES Permissions (Id) ON DELETE CASCADE;
 
 CREATE TABLE ChatUserRoles
 (
@@ -117,10 +113,10 @@ CREATE TABLE ChatUserRoles
 );
 
 ALTER TABLE ChatUserRoles
-    ADD CONSTRAINT FK_ChatUserRole_ChatUser FOREIGN KEY (ChatUserId) REFERENCES ChatUsers (Id);
+    ADD CONSTRAINT FK_ChatUserRole_ChatUser FOREIGN KEY (ChatUserId) REFERENCES ChatUsers (Id) ON DELETE CASCADE;
 
 ALTER TABLE ChatUserRoles
-    ADD CONSTRAINT FK_ChatUserRole_Role FOREIGN KEY (RoleId) REFERENCES Roles (Id);
+    ADD CONSTRAINT FK_ChatUserRole_Role FOREIGN KEY (RoleId) REFERENCES Roles (Id) ON DELETE CASCADE;
 
 CREATE TABLE MessageFiles
 (
@@ -128,8 +124,6 @@ CREATE TABLE MessageFiles
     FileId    BIGINT NOT NULL,
     PRIMARY KEY (MessageId, FileId)
 );
-
-
 
 CREATE TABLE Files
 (
@@ -144,7 +138,7 @@ CREATE TABLE Files
 );
 
 ALTER TABLE MessageFiles
-    ADD CONSTRAINT FK_MessageFile_Message FOREIGN KEY (MessageId) REFERENCES Messages (Id);
+    ADD CONSTRAINT FK_MessageFile_Message FOREIGN KEY (MessageId) REFERENCES Messages (Id) ON DELETE CASCADE;
 
 ALTER TABLE MessageFiles
-    ADD CONSTRAINT FK_MessageFile_File FOREIGN KEY (FileId) REFERENCES Files (Id);
+    ADD CONSTRAINT FK_MessageFile_File FOREIGN KEY (FileId) REFERENCES Files (Id) ON DELETE CASCADE;

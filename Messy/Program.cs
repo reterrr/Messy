@@ -14,7 +14,11 @@ builder.Services.AddControllers(options =>
 {
     options.Conventions.Add(new RoutePrefixConvention("api"));
     options.ReturnHttpNotAcceptable = true;
-}).AddJsonOptions(option => { option.JsonSerializerOptions.PropertyNamingPolicy = null; });
+}).AddJsonOptions(option =>
+{
+    option.JsonSerializerOptions.PropertyNamingPolicy = null;
+    option.JsonSerializerOptions.Converters.Add(new JsonCreateChatRequestConverter());
+});
 
 builder.Services.AddHttpContextAccessor();
 
@@ -68,7 +72,6 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("AllowAnonymous", policy => policy.RequireAssertion(_ => true));
 });
 
-// Add HTTP context accessor
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();

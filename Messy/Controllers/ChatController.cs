@@ -12,7 +12,17 @@ public class ChatController : ControllerBase
     [HttpPost("")]
     public IActionResult Create([FromBody] CreateChatRequest request)
     {
-        return ActionResolver<CreateChatAction, CreateChatRequest>
-            .Resolve(request);
+        return request switch
+        {
+            CreateOneToOneRequest createChatRequest =>
+                ActionResolver<CreateOneToOneAction, CreateOneToOneRequest>
+                    .Resolve(createChatRequest),
+
+            CreateManyToManyRequest createGroupRequest => 
+                ActionResolver<CreateManyToManyAction, CreateManyToManyRequest>
+                    .Resolve(createGroupRequest),
+
+            _ => BadRequest()
+        };
     }
 }
