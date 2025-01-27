@@ -1,4 +1,3 @@
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Messy.Helpers;
@@ -75,6 +74,8 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
+var env = app.Services.GetRequiredService<IWebHostEnvironment>();
+AppContext.SetData("WebHostEnvironment", env);
 
 if (app.Environment.IsDevelopment())
 {

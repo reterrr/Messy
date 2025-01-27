@@ -52,7 +52,7 @@ CREATE TABLE Messages
 (
     Id         BIGSERIAL PRIMARY KEY,
     Body       VARCHAR(5000) NOT NULL,
-    ParentId   BIGINT,
+    ParentId   BIGINT        NULL,
     ChatUserId BIGINT        NOT NULL,
     CreatedAt  TIMESTAMP     NOT NULL,
     UpdatedAt  TIMESTAMP,
@@ -60,23 +60,23 @@ CREATE TABLE Messages
 );
 
 ALTER TABLE Messages
-    ADD CONSTRAINT FK_Message_Parent FOREIGN KEY (ParentId) REFERENCES Messages (Id) ON DELETE CASCADE;
+    ADD CONSTRAINT FK_Message_Parent FOREIGN KEY (ParentId) REFERENCES Messages (Id) ON DELETE SET NULL;
 
 ALTER TABLE Messages
     ADD CONSTRAINT FK_Message_ChatUser FOREIGN KEY (ChatUserId) REFERENCES ChatUsers (Id) ON DELETE CASCADE;
 
 CREATE TABLE Roles
 (
-    Id       BIGSERIAL PRIMARY KEY,
+    Id   BIGSERIAL PRIMARY KEY,
     Type SMALLINT    NOT NULL,
-    Name     VARCHAR(70) NOT NULL
+    Name VARCHAR(70) NOT NULL
 );
 
 CREATE TABLE Permissions
 (
-    Id        BIGSERIAL PRIMARY KEY,
-    Name      VARCHAR(50) NOT NULL,
-    Type      SMALLINT    NOT NULL
+    Id   BIGSERIAL PRIMARY KEY,
+    Name VARCHAR(50) NOT NULL,
+    Type SMALLINT    NOT NULL
 );
 
 CREATE TABLE RolePermissions

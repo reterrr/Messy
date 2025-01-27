@@ -38,4 +38,14 @@ public class ChatService : ControllerBase
                 ChatId = id
             });
     }
+
+    [HttpPost("users/messages")]
+    [UserHasPermission(PermissionType.MessageToChat)]
+    public IActionResult CreateMessage([FromForm] CreateMessageRequest request, [FromRoute] long id)
+    {
+        request.ChatId = id;
+        
+        return ActionResolver<CreateMessageAction, CreateMessageRequest>
+            .Resolve(request);
+    }
 }
