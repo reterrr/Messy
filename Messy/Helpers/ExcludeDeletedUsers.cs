@@ -10,7 +10,7 @@ public static class ExcludeDeletedUsers
         return result switch
         {
             OkObjectResult { Value: IEnumerable<User> users } => new OkObjectResult(users
-                .Where(u => u.DeletedAt != null)
+                .Where(u => u.DeletedAt == null)
                 .ToList()),
             OkObjectResult { Value: User user } => new OkObjectResult(user.DeletedAt != null ? "" : user),
             _ => new OkObjectResult("No users found")

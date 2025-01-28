@@ -48,4 +48,27 @@ public class ChatService : ControllerBase
         return ActionResolver<CreateMessageAction, CreateMessageRequest>
             .Resolve(request);
     }
+    
+    [HttpPut("users/messages/{messageId:long}")]
+    [UserHasPermission(PermissionType.EditChat)]
+    public IActionResult UpdateMessage([FromBody] UpdateMessageRequest request, [FromRoute] long id, [FromRoute] long messageId)
+    {
+        request.ChatId = id;
+        request.MessageId = messageId;
+
+        return ActionResolver<UpdateMessageAction, UpdateMessageRequest>
+            .Resolve(request);
+    }
+
+    [HttpDelete("users/messages/{messageId:long}")]
+    [UserHasPermission(PermissionType.RemoveFromChat)]
+    public IActionResult DeleteMessage([FromRoute] long id, [FromRoute] long messageId)
+    {
+        return ActionResolver<DeleteMessageAction, DeleteMessageRequest>
+            .Resolve(new DeleteMessageRequest
+            {
+                ChatId = id,
+                MessageId = messageId
+            });
+    }
 }

@@ -30,7 +30,7 @@ public class AddGroupUserAction(AddGroupUserRequest request) : IAction<AddGroupU
         var chatExists = chatExistsCommand.ExecuteScalar() != null;
         if (!chatExists)
         {
-            return new BadRequestObjectResult(new { error = $"Chat with id {chatId} does not exist." });
+            return new BadRequestObjectResult(new { error = $"Group with id {chatId} does not exist." });
         }
 
         var userIdsParameter = string.Join(",", userIds);
@@ -63,6 +63,7 @@ public class AddGroupUserAction(AddGroupUserRequest request) : IAction<AddGroupU
                 $"select userid from chatusers where chatid = @chatId and userid = ANY(ARRAY[{userIdsParameter}]::bigint[])",
                 connection
             );
+        usersInChat.Parameters.AddWithValue("chatId", chatId);
 
         using var reader2 = usersInChat.ExecuteReader();
         var existsUserIds2 = new HashSet<long>();

@@ -21,13 +21,14 @@ public class AddChatUserAction(AddChatUserRequest request) : IAction<AddChatUser
         connection.Open();
 
         var chatExistsCommand = new NpgsqlCommand(
-            "SELECT 1 FROM chats WHERE id = @chatId",
+            "select exists(SELECT 1 FROM chats WHERE id = @chatId)",
             connection
         );
 
         chatExistsCommand.Parameters.AddWithValue("chatId", chatId);
+        chatExistsCommand.Parameters.AddWithValue("type", (short)ChatType.ManyToMany);
 
-        var chatExists = chatExistsCommand.ExecuteScalar() != null;
+        var chatExists = (bool)chatExistsCommand.ExecuteScalar();
         if (!chatExists)
         {
             return new BadRequestObjectResult(new { error = $"Chat with id {chatId} does not exist." });
@@ -40,7 +41,7 @@ public class AddChatUserAction(AddChatUserRequest request) : IAction<AddChatUser
 
         usersExistCommand.Parameters.AddWithValue("userId", userId);
 
-        var exists = usersExistCommand.ExecuteScalar() != null;
+        var exists = (bool)usersExistCommand.ExecuteScalar();
 
         if (!exists)
             return new BadRequestObjectResult(new { error = $"User with id {userId} does not exist." });
