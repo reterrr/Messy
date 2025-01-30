@@ -17,7 +17,7 @@ public class AddChatUserAction(AddChatUserRequest request) : IAction<AddChatUser
         var chatId = Request.chatId;
         var userId = Request.userId;
 
-        using var connection = NpgslqConnector.CreateConnection();
+        using var connection = NpgsqlConnector.CreateConnection();
         connection.Open();
 
         var chatExistsCommand = new NpgsqlCommand(

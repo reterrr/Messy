@@ -17,7 +17,7 @@ public class GetChatAction(GetChatRequest request) : IAction<GetChatRequest>
     {
         var chatId = Request.ChatId;
 
-        using var connection = NpgslqConnector.CreateConnection();
+        using var connection = NpgsqlConnector.CreateConnection();
         connection.Open();
 
         

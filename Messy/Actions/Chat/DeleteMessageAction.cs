@@ -14,7 +14,7 @@ public class DeleteMessageAction(DeleteMessageRequest request) : IAction<DeleteM
 
     public IActionResult Execute()
     {
-        using var connection = NpgslqConnector.CreateConnection();
+        using var connection = NpgsqlConnector.CreateConnection();
         connection.Open();
 
         var deleteCommand = new NpgsqlCommand(

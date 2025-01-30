@@ -25,7 +25,7 @@ public class UserInChat : ActionFilterAttribute
 
         try
         {
-            using (var connection = NpgslqConnector.CreateConnection())
+            using (var connection = NpgsqlConnector.CreateConnection())
             {
                 connection.Open();
 

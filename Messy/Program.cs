@@ -27,7 +27,7 @@ ConfigAccesser.Init(builder.Configuration);
 var connectionString = builder.Configuration.GetConnectionString("DockerCommandsConnectionString") ??
                        throw new InvalidOperationException("Missing Docker connection string");
 
-NpgslqConnector.setConnectionString(connectionString);
+NpgsqlConnector.setConnectionString(connectionString);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -52,7 +52,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 var userId = context.Principal?.FindFirst(ClaimTypes.NameIdentifier).Value;
 
                 long.TryParse(userId, out var user);
-    
+
                 if (!AuthValidator.UserExists(user))
                     context.Fail("Unauthorized");
 
@@ -77,11 +77,8 @@ var app = builder.Build();
 var env = app.Services.GetRequiredService<IWebHostEnvironment>();
 AppContext.SetData("WebHostEnvironment", env);
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseRouting();
 app.UseWebSockets();

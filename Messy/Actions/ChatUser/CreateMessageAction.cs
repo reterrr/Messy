@@ -29,7 +29,7 @@ public class CreateMessageAction : IAction<CreateMessageRequest>
 
     public IActionResult Execute()
     {
-        using var connection = NpgslqConnector.CreateConnection();
+        using var connection = NpgsqlConnector.CreateConnection();
         connection.Open();
         using var transaction = connection.BeginTransaction();
 

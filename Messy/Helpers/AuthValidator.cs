@@ -10,7 +10,7 @@ public class AuthValidator
     {
         User? user = null;
 
-        using (var connection = NpgslqConnector.CreateConnection())
+        using (var connection = NpgsqlConnector.CreateConnection())
         {
             connection.Open();
             var getUserCommand = new NpgsqlCommand("SELECT * FROM users WHERE username = @username", connection);
@@ -41,7 +41,7 @@ public class AuthValidator
     public bool UserExists(string matching)
     {
         var result = false;
-        using var connection = NpgslqConnector.CreateConnection();
+        using var connection = NpgsqlConnector.CreateConnection();
         connection.Open();
         var userExistsCommand =
             new NpgsqlCommand("SELECT EXISTS (SELECT 1 FROM users WHERE username = @matching)", connection);
@@ -58,7 +58,7 @@ public class AuthValidator
 
     public static bool UserExists(long userId)
     {
-        using var connection = NpgslqConnector.CreateConnection();
+        using var connection = NpgsqlConnector.CreateConnection();
 
         connection.Open();
 

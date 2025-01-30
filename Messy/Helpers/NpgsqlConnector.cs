@@ -2,7 +2,7 @@ using Npgsql;
 
 namespace Messy.Helpers;
 
-public static class NpgslqConnector
+public static class NpgsqlConnector
 {
     public static void setConnectionString(string connectionString)
     {

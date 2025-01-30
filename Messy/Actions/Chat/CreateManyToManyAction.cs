@@ -17,7 +17,7 @@ public class CreateManyToManyAction(CreateManyToManyRequest request) : IAction<C
     {
         var userIds = Request.UserIds;
         
-        using var connection = NpgslqConnector.CreateConnection();
+        using var connection = NpgsqlConnector.CreateConnection();
         connection.Open();
 
         var createGroupCommand = new NpgsqlCommand(

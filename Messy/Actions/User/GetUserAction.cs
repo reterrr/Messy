@@ -14,7 +14,7 @@ public class GetUserAction(GetUserRequest request) : IAction<GetUserRequest>
 
     public IActionResult Execute()
     {
-        using var connection = NpgslqConnector.CreateConnection();
+        using var connection = NpgsqlConnector.CreateConnection();
         connection.Open();
         var getUserCommand = new NpgsqlCommand("select * from users where id = @user", connection);
         getUserCommand.Parameters.AddWithValue("user", Request.UserId);

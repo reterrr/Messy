@@ -19,7 +19,7 @@ public class RegisterUserAction(RegisterRequest request) : IAction<RegisterReque
 
         try
         {
-            using (var connection = NpgslqConnector.CreateConnection())
+            using (var connection = NpgsqlConnector.CreateConnection())
             {
                 connection.Open();
                 var insetUser =

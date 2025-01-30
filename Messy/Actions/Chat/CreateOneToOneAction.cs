@@ -15,7 +15,7 @@ public class CreateOneToOneAction(CreateOneToOneRequest request) : IAction<Creat
 
     public IActionResult Execute()
     {
-        using var connection = NpgslqConnector.CreateConnection();
+        using var connection = NpgsqlConnector.CreateConnection();
         connection.Open();
 
         if (UsersAreAlreadyInOneToOneChat(connection))

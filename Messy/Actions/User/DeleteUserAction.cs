@@ -18,7 +18,7 @@ public class DeleteUserAction(DeleteUserRequest request) : IAction<DeleteUserReq
     {
         var userId = Request.GetCurrentUserId();
 
-        using (var connection = NpgslqConnector.CreateConnection())
+        using (var connection = NpgsqlConnector.CreateConnection())
         {
             connection.Open();
             var deleteUserCommand = new NpgsqlCommand("select delete_user(@user_id)", connection);

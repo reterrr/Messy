@@ -14,7 +14,7 @@ public class SearchUserAction(SearchUserRequest request) : IAction<SearchUserReq
 
     public IActionResult Execute()
     {
-        using var connection = NpgslqConnector.CreateConnection();
+        using var connection = NpgsqlConnector.CreateConnection();
         connection.Open();
 
         var searchUsersCommand = new NpgsqlCommand("select * from search_users(@username)", connection);

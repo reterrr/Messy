@@ -14,7 +14,7 @@ public class UpdateMessageAction(UpdateMessageRequest request) : IAction<UpdateM
 
     public IActionResult Execute()
     {
-        using var connection = NpgslqConnector.CreateConnection();
+        using var connection = NpgsqlConnector.CreateConnection();
         connection.Open();
 
         var updateCommand = new NpgsqlCommand(

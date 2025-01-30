@@ -26,7 +26,7 @@ public class UserHasPermission(PermissionType requiredPermissionType) : ActionFi
 
         if (long.TryParse(context.RouteData.Values["messageId"] as string, out var messageId))
         {
-            var connection = NpgslqConnector.CreateConnection();
+            var connection = NpgsqlConnector.CreateConnection();
             connection.Open();
 
             var command = new NpgsqlCommand(
@@ -45,7 +45,7 @@ from messages where chatuserid = (select id from chatusers where chatid = @chatI
 
         try
         {
-            using (var connection = NpgslqConnector.CreateConnection())
+            using (var connection = NpgsqlConnector.CreateConnection())
             {
                 connection.Open();
 

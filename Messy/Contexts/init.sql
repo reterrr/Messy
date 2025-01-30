@@ -142,3 +142,94 @@ ALTER TABLE MessageFiles
 
 ALTER TABLE MessageFiles
     ADD CONSTRAINT FK_MessageFile_File FOREIGN KEY (FileId) REFERENCES Files (Id) ON DELETE CASCADE;
+
+
+create or replace function search_users(username_ varchar(255))
+    returns setof users
+    language plpgsql as
+$$
+begin
+    return query
+        select *
+        from users
+        where username ilike username_ || '%';
+end;
+$$;
+
+CREATE OR REPLACE PROCEDURE add_users_to_chat(
+    userIds bigint[],
+    chatId_ bigint
+)
+    LANGUAGE plpgsql AS
+$$
+DECLARE
+    iuid bigint;
+BEGIN
+    FOREACH iuid IN ARRAY userIds
+        LOOP
+            IF EXISTS (SELECT 1 FROM users WHERE id = iuid) and
+               not exists(select 1 from chatusers where chatid = chatId_ and userid = iuid) THEN
+                INSERT INTO chatusers(userid, chatid, createdat)
+                VALUES (iuid, chatId_, now());
+            END IF;
+        END LOOP;
+END;
+$$;
+
+create or replace procedure assign_certain_role(
+    user_ids bigint[],
+    chat_id bigint,
+    role_type bigint
+)
+    language plpgsql
+as
+$$
+declare
+    user_id bigint;
+begin
+    foreach user_id in array user_ids
+        loop
+            insert into chatuserroles(chatuserid, roleid)
+            values ((select id from chatusers where chatid = chat_id and userid = user_id),
+                    (select id from roles where type = role_type));
+        end loop;
+end;
+$$;
+
+create function delete_user(userid bigint) returns boolean
+    language plpgsql
+as
+$$
+DECLARE
+    deleted BOOLEAN;
+BEGIN
+    DELETE FROM users WHERE id = userId RETURNING TRUE INTO deleted;
+
+    RETURN COALESCE(deleted, FALSE);
+end;
+$$;
+
+INSERT INTO Permissions (Name, Type)
+VALUES ('AddToChat', 0),
+       ('RemoveFromChat', 1),
+       ('EditChat', 2),
+       ('MessageToChat', 3),
+       ('BanInChat', 4);
+
+INSERT INTO Roles (Type, Name)
+VALUES
+    (0, 'Owner'),
+    (1, 'CoOwner'),
+    (2, 'User');
+
+insert into rolepermissions(roleid, permissionid)
+values (1, 1),
+       (1, 2),
+       (1, 3),
+       (1, 4),
+       (1,5),
+       (2, 1),
+       (2, 2),
+       (2, 4),
+       (3,1),
+       (3,4)

@@ -17,7 +17,7 @@ public class AddGroupUserAction(AddGroupUserRequest request) : IAction<AddGroupU
         var chatId = Request.ChatId;
         var userIds = Request.UserIds;
 
-        using var connection = NpgslqConnector.CreateConnection();
+        using var connection = NpgsqlConnector.CreateConnection();
         connection.Open();
 
         var chatExistsCommand = new NpgsqlCommand(

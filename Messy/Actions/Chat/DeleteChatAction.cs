@@ -14,7 +14,7 @@ public class DeleteChatAction(DeleteChatRequest request) : IAction<DeleteChatReq
 
     public IActionResult Execute()
     {
-        using var connection = NpgslqConnector.CreateConnection();
+        using var connection = NpgsqlConnector.CreateConnection();
 
         connection.Open();
 

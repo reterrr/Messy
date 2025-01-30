@@ -34,6 +34,5 @@ public static class JwTGenerator
 
 
         return tokenHandler.WriteToken(token);
-        ;
     }
 }
